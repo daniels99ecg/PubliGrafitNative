@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { View, TextInput, Button, Text, StyleSheet, Image   } from "react-native";
 import { useNavigate } from "react-router-native";
-import { useUser } from "../context/userContext";
+import { useUser } from "../../context/usuario/userContext";
+import axios from 'axios';
+
+
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
 const Login = () => {

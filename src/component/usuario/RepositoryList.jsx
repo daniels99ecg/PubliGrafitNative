@@ -1,12 +1,12 @@
 import React,{useState, useEffect} from "react";
 import { View, Text, StyleSheet, StatusBar, TouchableHighlight, ScrollView  } from "react-native";
 // import repositories from "../../data/repositories";
-import RepositoryItem from "./RepositoryItem.jsx";
+import RepositoryItem from "../RepositoryItem.jsx";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigate } from "react-router-native";
-import Nav from "./Nav";
+import Nav from "../nav/Nav.jsx";
 
-import { useUser } from "../context/userContext";
+import { useUser } from "../../context/usuario/userContext.jsx";
 
 
 

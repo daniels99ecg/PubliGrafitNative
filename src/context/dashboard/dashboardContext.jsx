@@ -12,7 +12,7 @@ export const DashboardProvider = ({ children }) => {
 
     const fetchData = async () => {
         try {
-          const response = await fetch(`${apiUrl}venta/ventadia`);
+          const response = await fetch(`${apiUrl}fichatecnica/ordendia`);
           const jsonData = await response.json();
           setDatos(jsonData);
         } catch (error) {
@@ -32,7 +32,7 @@ export const DashboardProvider = ({ children }) => {
 
       const fetchData3 = async () => {
         try {
-          const response3 = await fetch(`${apiUrl}venta/ventames`);
+          const response3 = await fetch(`${apiUrl}fichatecnica/ordenmes`);
           const jsonData3 = await response3.json();
       
           // Transformar los datos para la gráfica de barras

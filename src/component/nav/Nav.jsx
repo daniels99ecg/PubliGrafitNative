@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, StatusBar, TouchableHighlight, ScrollView  } from "react-native";
 import { useNavigate } from "react-router-native";
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { useUser } from "../context/userContext";
+import { useUser } from "../../context/usuario/userContext";
 
 
 const Nav = ({ menuVisible, toggleMenu }) => {
@@ -38,10 +38,10 @@ const Nav = ({ menuVisible, toggleMenu }) => {
                 <Text style={styles.menuText}>Usuario</Text>
               </View>
             </TouchableHighlight>
-            <TouchableHighlight onPress={() => { toggleMenu(); navigation("/Venta") }}>
+            <TouchableHighlight onPress={() => { toggleMenu(); navigation("/Orden") }}>
               <View style={styles.menuItem}>
                 <Icon name="point-of-sale" size={30} color="#fff" />
-                <Text style={styles.menuText}>Ventas</Text>
+                <Text style={styles.menuText}>Ordenes</Text>
               </View>
             </TouchableHighlight>
             <View style={{ borderBottomWidth: 1, borderBottomColor: 'white', marginVertical: 10 }} />
@@ -59,13 +59,12 @@ const Nav = ({ menuVisible, toggleMenu }) => {
   
   const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      position: "absolute",
+      position: "relative",
+
       top: 0,
       left: 0,
       right: 0,
       bottom: 0,
-      zIndex: 2
 
     },
     appbar: {
@@ -87,14 +86,13 @@ const Nav = ({ menuVisible, toggleMenu }) => {
       marginRight: 10,
     },
     menuContainer: {
-        position: "absolute",
-        top: 50, // La posición inicial del menú debe ser la misma que la altura del appbar
-        left: 0,
-        backgroundColor: "#177AD5",
-        width: "70%",
-        height: "100%",
-        zIndex: 1,
-        padding: 20,
+    position: "relative",
+    backgroundColor: "#177AD5",
+    width: "70%",
+    height: "100%",
+    zIndex: 1,
+    padding: 20,
+  
     },
     menuItem: {
       flexDirection: "row",

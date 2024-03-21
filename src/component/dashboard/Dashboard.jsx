@@ -3,9 +3,9 @@ import { View, Text, StyleSheet, StatusBar, TouchableHighlight, ScrollView  } fr
 import { BarChart, PieChart } from "react-native-gifted-charts";
 import { useNavigate } from "react-router-native";
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { useUser } from "../context/userContext";
-import { useDashboard } from "../context/dashboardContext";
-import Nav from "./Nav";
+import { useUser } from "../../context/usuario/userContext";
+import { useDashboard } from "../../context/dashboard/dashboardContext";
+import Nav from "../nav/Nav";
 
 const Dashboard = () => {
 

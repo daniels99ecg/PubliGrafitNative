@@ -4,7 +4,7 @@
     "slug": "primera",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/PubliGrafit2.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -19,18 +19,14 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/PubliGrafit2.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.danielecg99.primera"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "78645ac7-077a-4eec-a958-8ec0ea9cf31f"
-      }
     }
+    
   }
 }
