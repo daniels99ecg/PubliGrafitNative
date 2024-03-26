@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { View, TextInput, Button, Text, StyleSheet, Image   } from "react-native";
-import { useNavigate } from "react-router-native";
+// import { useNavigate } from "react-router-native";
+import { useNavigation } from "@react-navigation/native"; // Importa la función useNavigation
+
 import { useUser } from "../../context/usuario/userContext";
 import axios from 'axios';
-
+import Home from '../home/Home'
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
@@ -12,9 +14,16 @@ const Login = () => {
   const [contrasena, setContrasena] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const { setUsername } = useUser();
-  const navigation = useNavigate();
+  // const navigation = useNavigate();
+  const navigation = useNavigation();
+
 
   const handleLogin = async () => {
+    if (!email || !contrasena) {
+      setErrorMessage("Por favor, completa todos los campos.");
+      return; // Evita que continúe el proceso de inicio de sesión si faltan campos
+    }
+
     try {
       // Reemplaza esta URL con la dirección de tu propia API de autenticación
       const response = await fetch(`${apiUrl}usuario/login`, {
@@ -31,14 +40,15 @@ const Login = () => {
         if(data.user.nombre_rol==="Administrador"){
           const username = data.user.nombre;
           setUsername(username);
-          navigation("/Dashboard")
+          navigation.navigate('MainStack');
+          
         }else{
           setErrorMessage(data.message || "Solo los administradores pueden acceder.");
         }
        
       } else {
         // Manejar los errores, por ejemplo, mostrando un mensaje de error
-        setErrorMessage(data.message || "Error al iniciar sesión");
+        setErrorMessage(data.message || "Usuario o Contraseña Incorrecta");
       }
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
@@ -48,7 +58,7 @@ const Login = () => {
   
   return (
     <View style={styles.container}>
-            <Image source={{ uri: 'http://drive.google.com/uc?export=view&id=1Zu2cm69lPkIEu09fqA4wA1B3BTL88v1w' }} style={styles.logo} />
+            <Image source={require('../../../public/img/PubliGrafit2.png')} style={styles.logo} />
 
       <TextInput
         style={styles.input}
@@ -64,7 +74,9 @@ const Login = () => {
         onChangeText={setContrasena}
         secureTextEntry
       />
-      {errorMessage ? <Text>{errorMessage}</Text> : null}
+      <View style={errorMessage ? styles.errorMessageContainer : null}>
+      <Text style={errorMessage ? styles.errorMessage : null}>{errorMessage}</Text>
+    </View>
       <Button title="Iniciar sesión" onPress={handleLogin} />
     </View>
   );
@@ -87,6 +99,17 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     marginBottom: 20,
+  }, 
+    errorMessageContainer: {
+    backgroundColor: '#FF1350',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  // Estilos para el texto del mensaje de error
+  errorMessage: {
+    color: 'white',
+    textAlign: 'center',
   },
 });
 export default Login;

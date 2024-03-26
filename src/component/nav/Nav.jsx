@@ -1,30 +1,39 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, StatusBar, TouchableHighlight, ScrollView  } from "react-native";
-import { useNavigate } from "react-router-native";
+// import { useNavigate } from "react-router-native";
+import { useNavigation } from "@react-navigation/native"; // Importa la función useNavigation
+
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useUser } from "../../context/usuario/userContext";
 
 
-const Nav = ({ menuVisible, toggleMenu }) => {
-    const navigation = useNavigate();
+const Nav = () => {
+    // const navigation = useNavigate();
     const { username } = useUser();
-  
+    const navigation = useNavigation();
+
     return (
       <View style={styles.container}>
-        <StatusBar backgroundColor="#177AD5" barStyle="light-content" translucent={true} height={80} />
+        <StatusBar backgroundColor="#177AD5" barStyle="light-content" translucent={true} />
         {/* Appbar */}
         <View style={styles.appbar}>
           {/* Botón de menú */}
-          <TouchableHighlight onPress={toggleMenu} style={styles.menuButton}>
+          <TouchableHighlight onPress={() => { navigation.navigate('Login');
+ }}>
+              <View style={styles.menuItem}>
+                <Icon name="logout" size={25} color="#fff" />
+              </View>
+            </TouchableHighlight>
+          {/* <TouchableHighlight onPress={toggleMenu} style={styles.menuButton}>
             <Icon name="menu" size={30} color="#fff" />
-          </TouchableHighlight>
+          </TouchableHighlight> */}
           {/* Título */}
           <Text style={styles.title}>PubliGrafit</Text>
         </View>
         {/* Menú desplegable */}
-        {menuVisible && (
+        {/* {menuVisible && (
           <View style={styles.menuContainer}>
-            {/* Contenido del menú */}
+           
             <Text style={styles.menuText}>Bienvenido: {username}</Text>
             <TouchableHighlight onPress={() => { toggleMenu(); navigation("/Dashboard") }}>
               <View style={styles.menuItem}>
@@ -52,7 +61,7 @@ const Nav = ({ menuVisible, toggleMenu }) => {
               </View>
             </TouchableHighlight>
           </View>
-        )}
+        )} */}
       </View>
     );
   };
@@ -60,7 +69,6 @@ const Nav = ({ menuVisible, toggleMenu }) => {
   const styles = StyleSheet.create({
     container: {
       position: "relative",
-
       top: 0,
       left: 0,
       right: 0,
@@ -70,7 +78,7 @@ const Nav = ({ menuVisible, toggleMenu }) => {
     appbar: {
       position: "fixed", 
       backgroundColor: "#177AD5",
-      height: 50,
+      height: 90,
       flexDirection: "row",
       alignItems: "center",
       paddingHorizontal: 10,
@@ -80,6 +88,7 @@ const Nav = ({ menuVisible, toggleMenu }) => {
       fontWeight: "bold",
       color: "#fff",
       flex: 1,
+      marginBottom:-20,
       textAlign: "center",
     },
     menuButton: {
@@ -97,7 +106,7 @@ const Nav = ({ menuVisible, toggleMenu }) => {
     menuItem: {
       flexDirection: "row",
       alignItems: "center",
-      marginBottom: 10,
+      marginBottom:-50
     },
     menuText: {
       color: "#fff",

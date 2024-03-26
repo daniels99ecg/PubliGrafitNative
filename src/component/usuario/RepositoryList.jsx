@@ -5,6 +5,7 @@ import RepositoryItem from "../RepositoryItem.jsx";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigate } from "react-router-native";
 import Nav from "../nav/Nav.jsx";
+import FooterAbajo from "../nav/FooterAbajo"
 
 import { useUser } from "../../context/usuario/userContext.jsx";
 
@@ -64,6 +65,7 @@ const RepoList=()=>{
    
       </View>
       </ScrollView>
+      <FooterAbajo/>
       </View>
     )
 }
