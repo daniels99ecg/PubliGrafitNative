@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "primera",
-    "slug": "primera",
+    "name": "Publigratif",
+    "slug": "Publigratif",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/PubliGrafit2.png",
@@ -22,15 +22,11 @@
         "foregroundImage": "./assets/PubliGrafit2.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.danielecg99.primera"
+      "package": "com.danielecg99.Publigratif"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "78645ac7-077a-4eec-a958-8ec0ea9cf31f"
-      }
     }
+   
   }
 }

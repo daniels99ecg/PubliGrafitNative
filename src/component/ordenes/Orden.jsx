@@ -171,7 +171,9 @@ const Orden =()=>{
         toggleModalVisibilityUpdate();
         await fetchOrdenes(); // Actualizar la lista de órdenes después de la actualización
       } else {
-        console.error("Error al actualizar la orden:", response.statusText);
+        const errorData = await response.json();
+
+        console.error("Error al actualizar la orden:", errorData.error);
         // Aquí puedes manejar el caso si la solicitud no es exitosa
       }
     } catch (error) {
@@ -276,8 +278,8 @@ const total = ordenesSeleccionadas.reduce((acc, current) => acc + (current.canti
           Alert.alert("Error", "El nombre de la ficha técnica ya está registrado");
 
         } else {
-          console.error("Error desconocido:", errorData.error);
-          Alert.alert("Error", "Error al procesar la solicitud");
+          // console.error("Error desconocido:", errorData.error);
+          Alert.alert(errorData.error);
         }
       }
     } catch (error) {
@@ -384,8 +386,9 @@ console.log(ordenesSeleccionadas)
       if (response.ok) {
         await fetchOrdenes();
       } else {
-        // Manejar el caso de error si es necesario
-        console.error('Error al actualizar la operación:', response.statusText);
+        const errorData = await response.json();
+        // console.error('Error al actualizar la operación:', errorData.error);
+        Alert.alert(errorData.error);
       }
     } catch (error) {
       console.error('Error de red:', error);
@@ -593,7 +596,7 @@ console.log(ordenesSeleccionadas)
 >
 <Picker.Item label="Seleccionar insumo" value={null} />
 
-  {insumos.map((insumo, index) => (
+{insumos.filter(insumo => insumo.cantidad > 0).map((insumo, index) => (
     <Picker.Item key={index} label={insumo.nombre} value={insumo.id_insumo} />
   ))}
 </Picker>
