@@ -7,6 +7,7 @@ import { useUser } from "../../context/usuario/userContext";
 import axios from 'axios';
 import Home from '../home/Home'
 
+import publugrafitLogin from '../../../public/img/PubliGrafit2.png'
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
 const Login = () => {
@@ -58,7 +59,7 @@ const Login = () => {
   
   return (
     <View style={styles.container}>
-            <Image source={require('../../../public/img/PubliGrafit2.png')} style={styles.logo} />
+            <Image source={publugrafitLogin} style={styles.logo} />
 
       <TextInput
         style={styles.input}
