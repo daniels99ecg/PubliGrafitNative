@@ -68,22 +68,20 @@ function formatearValores(amount) {
 
   return (
     <View style={styles.container}>
-         {/* <Nav menuVisible={menuVisible} toggleMenu={toggleMenu}/> */}
+         <Nav title="Listar Ventas"/>
 
     <ScrollView contentContainerStyle={styles.scrollContainer}>
     <View style={styles.container}>
-
-      <View style={styles.content}>
-
-        {/*Esta es zona de trabajo*/}
-        
-        <Text style={styles.titleDash}>Listar Ventas</Text>
-        <TextInput
+    <TextInput
               style={styles.inputBusqueda}
               placeholder="Buscar..."
               value={busqueda}
               onChangeText={setBusqueda} // Actualiza el estado de busqueda con el texto del input
             />
+      <View style={styles.content}>
+
+        {/*Esta es zona de trabajo*/}
+         
         <View>
         <View>
         {ordenesActuales.map(repo => (
@@ -126,11 +124,12 @@ function formatearValores(amount) {
 
 
   content: {
-     flex:1,// Para que ocupe todo el espacio disponible
+    flex:1,// Para que ocupe todo el espacio disponible
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 16, // Ajusta según sea necesario
-        paddingBottom: 80, 
+    paddingBottom: 80, 
+    margin: 12,
   
   },
   card: {
@@ -165,13 +164,11 @@ titleDash: {
 },
 inputBusqueda: {
   height: 40,
-  width:"50%",
-  margin: 12,
   borderWidth: 1,
   padding: 10,
-  borderRadius: 10, // Añade bordes redondeados
   borderColor: 'gray', // Cambia el color del borde si lo deseas
-},botonPagina: {
+},
+botonPagina: {
   padding: 10,
   marginHorizontal: 5,
   backgroundColor: 'lightgray',

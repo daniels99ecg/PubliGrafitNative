@@ -5,6 +5,8 @@ import { Routes, Route } from "react-router-native";
 import Login from "./login/Login.jsx";
 import RepoList from './usuario/RepositoryList.jsx';
 import Dashboard from "./dashboard/Dashboard.jsx";
+import MainDashboard from "./dashboard/MainDashboard.jsx";
+
 import Orden from "./ordenes/Orden.jsx";
 import Home from "./home/Home.jsx"
 import Venta from "./venta/Venta.jsx";
@@ -29,8 +31,25 @@ const Main = () => {
               headerShown: false,
               headerBackVisible: false
             }} />
-            
-            <Stack.Screen name="MainStack" component={MainStack} options={{ headerShown: false }} />
+            <Stack.Screen name="Home" component={Home} />
+
+            <Stack.Screen name="MainDashboard" component={Dashboard} options={{ 
+              headerShown: false,
+              headerBackVisible: false
+            }} />
+            <Stack.Screen name="Usuarios" component={RepoList} />
+            <Stack.Screen name="MainOrden" component={Orden} options={{ 
+              headerShown: false,
+              headerBackVisible: false
+            }} />
+            <Stack.Screen name="MainVenta" component={Venta} options={{ 
+              headerShown: false,
+              headerBackVisible: false
+            }} />
+            <Stack.Screen name="Footer" component={FooterAbajo} />
+
+            {/*<Stack.Screen name="MainStack" component={MainStack} options={{ headerShown: false }} />*/}
+
           </Stack.Navigator>
         </NavigationContainer>
       </UserProvider>
@@ -45,31 +64,31 @@ const styles = StyleSheet.create({
     flexGrow: 1
   }
 });
-const MainStack = () => {
-  return (
-    <View style={{ flex: 1 }}>
-      <Nav/>
-    <Stack.Navigator>
-            <Stack.Screen name="Home" component={Home} />
+// const MainStack = () => {
+//   return (
+//     <View style={{ flex: 1 }}>
+//       <Nav/>
+//     <Stack.Navigator>
+//       <Stack.Screen name="Home" component={Home} />
 
-      <Stack.Screen name="MainDashboard" component={Dashboard} options={{ 
-        headerShown: false,
-        headerBackVisible: false
-      }} />
-      <Stack.Screen name="Usuarios" component={RepoList} />
-      <Stack.Screen name="MainOrden" component={Orden} options={{ 
-        headerShown: false,
-        headerBackVisible: false
-      }} />
-      <Stack.Screen name="MainVenta" component={Venta} options={{ 
-        headerShown: false,
-        headerBackVisible: false
-      }} />
-      <Stack.Screen name="Footer" component={FooterAbajo} />
+//       <Stack.Screen name="MainDashboard" component={MainDashboard} options={{ 
+//         headerShown: false,
+//         headerBackVisible: false
+//       }} />
+//       <Stack.Screen name="Usuarios" component={RepoList} />
+//       <Stack.Screen name="MainOrden" component={Orden} options={{ 
+//         headerShown: false,
+//         headerBackVisible: false
+//       }} />
+//       <Stack.Screen name="MainVenta" component={Venta} options={{ 
+//         headerShown: false,
+//         headerBackVisible: false
+//       }} />
+//       <Stack.Screen name="Footer" component={FooterAbajo} />
       
-    </Stack.Navigator>
+//     </Stack.Navigator>
     
-    </View>
-  );
-};
+//     </View>
+//   );
+// };
 export default Main;

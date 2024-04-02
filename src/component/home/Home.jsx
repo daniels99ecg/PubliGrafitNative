@@ -6,7 +6,6 @@ import FooterAbajo from "../nav/FooterAbajo"
 import { useNavigation } from "@react-navigation/native";
 
 const Home = () => {
-  const [menuVisible, setMenuVisible] = useState(false); // Estado para controlar la visibilidad del menú
   // const navigation = useNavigation();
   const navigation = useNavigation();
 
@@ -16,20 +15,25 @@ const Home = () => {
       headerShown: false
     });
   }, []);
-  const toggleMenu = () => {
-    setMenuVisible(!menuVisible); // Cambiar el estado de visibilidad del menú
-  };
+
 
   return (
-    <View style={styles.container}>
-      <View>
+ 
+       <View style={styles.container}>
+   <Nav title="Bienvenido"/>
+    <View style={styles.container} >
+    <View style={styles.content}>
+      <View >
         <Image source={require('../../../public/img/roco.png')} style={styles.logo} />
       </View>
-      <Text>Una tradición familiar de treinta años le ha dado forma y alma a este proyecto que concibe el papel como lienzo y la tinta como ese trazo fino y delicado que constituye el arte litográfico. Rocco trasciende el rótulo de empresa y se convierte en un equipo sólido, comprometido con la calidad de sus productos y servicios.</Text>
+      <Text style={styles.text}>Una tradición familiar de treinta años le ha dado forma y alma a este proyecto que concibe el papel como lienzo y la tinta como ese trazo fino y delicado que constituye el arte litográfico. Rocco trasciende el rótulo de empresa y se convierte en un equipo sólido, comprometido con la calidad de sus productos y servicios.</Text>
 
-
+</View>
       <FooterAbajo />
+
     </View>
+    </View>
+    
   );
 };
 
@@ -37,15 +41,27 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    justifyContent: 'center',
-    alignItems: 'center',
+  
   },
   logo: {
-    width: 380,
+    width: 360,
     height: 150,
     resizeMode: 'stretch',
 
-  },
+  },text: {
+    fontSize: 15, // Ajusta el tamaño del texto a tu preferencia
+    textAlign: 'left', // Alinea el texto a la izquierda
+    margin: 10, // Añade un poco de margen alrededor del texto para que no esté pegado a los bordes de la pantalla
+  }, content: {
+    flex:1,// Para que ocupe todo el espacio disponible
+   justifyContent: "center",
+   alignItems: "center",
+   paddingHorizontal: 16, // Ajusta según sea necesario
+   paddingBottom: 80, 
+   margin: 12,
+ 
+ },
+  
 });
 
 export default Home;

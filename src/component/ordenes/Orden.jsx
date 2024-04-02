@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, StatusBar, TouchableHighlight, ScrollView,Modal, Button, TextInput ,TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, StatusBar, TouchableHighlight, ScrollView,Modal, Button, TextInput ,TouchableOpacity, SafeAreaView  } from "react-native";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 // import { useNavigate } from "react-router-native";
 import Nav from "../nav/Nav";
@@ -431,31 +431,31 @@ console.log(ordenesSeleccionadas)
   }
   return (
     <View style={styles.container}>
-         {/* <Nav menuVisible={menuVisible} toggleMenu={toggleMenu}/> */}
+         <Nav title="Listar Ordenes"/> 
 
     <ScrollView contentContainerStyle={styles.scrollContainer}>
     <View style={styles.container}>
-
-      <View style={styles.content}>
-
-        {/*Esta es zona de trabajo*/}
-        
-        <Text style={styles.titleDash}>Listar Ordenes</Text>
-        <TextInput
+    <TextInput
               style={styles.inputBusqueda}
               placeholder="Buscar..."
               value={busqueda}
               onChangeText={setBusqueda} // Actualiza el estado de busqueda con el texto del input
             />
+      <View style={styles.content}>
+
+        {/*Esta es zona de trabajo*/}
+        
+        {/* <Text style={styles.titleDash}>Listar Ordenes</Text> */}
+       
         <View>
         <View>
         {ordenesActuales.map(repo => (
             <View key={repo.id_ft} style={styles.card}>
-              <Text style={styles.cardText}>Id Orden: {repo.id_ft}</Text>
-              <Text style={styles.cardText}>Nombre: {repo.nombre_ficha}</Text>
-              <Text style={styles.cardText}>Cliente: {repo.cliente.nombre}</Text> 
-              <Text style={styles.cardText}>Incremento de venta: {formatearValores(repo.mano_obra)}</Text>
-              <Text style={styles.cardText}>Costo: {formatearValores(repo.costo_final_producto)}</Text>
+              <Text style={styles.cardText}>Id Orden: <Text style={{fontWeight:'normal'}}>{repo.id_ft}</Text></Text>
+              <Text style={styles.cardText}>Nombre: <Text style={{fontWeight:'normal'}}> {repo.nombre_ficha}</Text></Text>
+              <Text style={styles.cardText}>Cliente: <Text style={{fontWeight:'normal'}}>{repo.cliente.nombre}</Text></Text> 
+              <Text style={styles.cardText}>Incremento de venta:<Text style={{fontWeight:'normal'}}> {formatearValores(repo.mano_obra)}</Text></Text>
+              <Text style={styles.cardText}>Costo: <Text style={{fontWeight:'normal'}}>{formatearValores(repo.costo_final_producto)}</Text></Text>
               <View style={styles.pickerContainerOrdenes}>
 
         <Picker
@@ -669,9 +669,17 @@ console.log(ordenesSeleccionadas)
 </Modal>
 
       </ScrollView>
-      <View style={styles.boton}> 
-      <Button title="Registrar Orden"  onPress={toggleModalVisibility} />
-      </View>
+      <SafeAreaView style={styles.containerboton}>
+      {/* <Button title="+"  onPress={toggleModalVisibility} /> */}
+
+      <TouchableOpacity style={styles.boton} onPress={toggleModalVisibility}>
+      <Text>
+        <Icon name="add" size={30} color="#FFF" /> {/* Usamos el ícono 'star' como ejemplo */}
+      </Text>
+      </TouchableOpacity>
+  
+      </SafeAreaView>
+
       <FooterAbajo/> 
 
       </View>
@@ -683,6 +691,9 @@ console.log(ordenesSeleccionadas)
   container: {
     flex:1,
     backgroundColor: "#fff"
+  },
+  containerboton:{
+    flex:1,
   },
   appbar: {
     backgroundColor: "#177AD5",
@@ -703,7 +714,8 @@ console.log(ordenesSeleccionadas)
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 16, // Ajusta según sea necesario
-        paddingBottom: 80, 
+    paddingBottom: 80, 
+    margin: 12,
   
   },
   card: {
@@ -852,7 +864,15 @@ errorText:{
   color:"red"
 },
 boton:{
-  paddingBottom:49
+  position: 'relative', // Posición absoluta para el botón
+  bottom: 0, // Posicionado en la parte inferior de la pantalla
+  left: 300, // Al lado izquierdo de la pantalla
+  width: 60, // Ancho del círculo
+  height: 60, // Altura del círculo
+  borderRadius: 30, // Esto hará que sea un círculo
+  justifyContent: 'center', // Centra el contenido (el texto del botón) verticalmente
+  alignItems: 'center', // Centra el contenido (el texto del botón) horizontalmente
+  backgroundColor: '#007bff',
 },
 buttonContainer: {
   flexDirection: 'row',
@@ -863,11 +883,8 @@ buttonContainer: {
 },
 inputBusqueda: {
   height: 40,
-  width:"50%",
-  margin: 12,
   borderWidth: 1,
   padding: 10,
-  borderRadius: 10, // Añade bordes redondeados
   borderColor: 'gray', // Cambia el color del borde si lo deseas
 },
 botonPagina: {
@@ -881,6 +898,9 @@ botonPaginaActivo: {
 textoPaginaActivo: {
   color: 'white',
 },
+cardText:{
+  fontWeight:'bold'
+}
 });
       
 

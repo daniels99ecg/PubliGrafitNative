@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useUser } from "../../context/usuario/userContext";
 
 
-const Nav = () => {
+const Nav = ({ title }) => {
     // const navigation = useNavigate();
     const { username } = useUser();
     const navigation = useNavigation();
@@ -28,7 +28,11 @@ const Nav = () => {
             <Icon name="menu" size={30} color="#fff" />
           </TouchableHighlight> */}
           {/* Título */}
-          <Text style={styles.title}>PubliGrafit</Text>
+          <View style={styles.titleContainer}>
+                    <Text style={styles.mainTitle}>PubliGrafit</Text>
+                    <Text style={styles.dynamicTitle}>{title}</Text>
+                </View>
+
         </View>
         {/* Menú desplegable */}
         {/* {menuVisible && (
@@ -83,14 +87,6 @@ const Nav = () => {
       alignItems: "center",
       paddingHorizontal: 10,
     },
-    title: {
-      fontSize: 25,
-      fontWeight: "bold",
-      color: "#fff",
-      flex: 1,
-      marginBottom:-20,
-      textAlign: "center",
-    },
     menuButton: {
       marginRight: 10,
     },
@@ -112,7 +108,22 @@ const Nav = () => {
       color: "#fff",
       fontSize: 20,
       marginLeft: 10,
-    },
+    },titleContainer: {
+      flex: 1, // Toma el espacio disponible
+      alignItems: "center", // Centra los títulos horizontalmente
+  },
+  mainTitle: {
+      fontSize:15,
+      fontWeight: "bold",
+      color: "#fff",
+      marginTop:20, // Espacio entre los títulos
+
+  },
+  dynamicTitle: {
+      fontSize: 25,
+      color: "#fff",
+      fontWeight: "bold",
+  },
   });
   
 

@@ -16,9 +16,9 @@ const CreateOrden = ({ isModalVisible, toggleModalVisibility, handleAddVenta, no
       maximumFractionDigits: 0,
     }).format(amount);
   }
-const total = ordenesSeleccionadas.reduce((acc, current) => acc + (current.cantidad * current.precio + (parseInt(incrementoVenta) || 0) ), 0);
-const iva=total*0.19
-const granTotal=iva+total
+  const total = ordenesSeleccionadas.reduce((acc, current) => acc + (current.cantidad * current.precio + (parseInt(incrementoVenta) || 0)), 0);
+  const iva = total * 0.19
+  const granTotal = iva + total
 
 
 
@@ -54,9 +54,6 @@ const granTotal=iva+total
 
           </View>
 
-
-
-
           <TextInput
             style={styles.input}
             placeholder="Nombre producto"
@@ -88,7 +85,7 @@ const granTotal=iva+total
             keyboardType="numeric"
             onChangeText={(text) => {
               if (text !== undefined) {
-                setIncrementoVenta(text.replace(/\D/g, '')); 
+                setIncrementoVenta(text.replace(/\D/g, ''));
                 // Limpia el error específico al modificar el campo
                 setErrors((prevErrors) => ({ ...prevErrors, incrementoVenta: null }));
               }
@@ -103,9 +100,9 @@ const granTotal=iva+total
               style={styles.picker}
             >
               <Picker.Item label="Seleccionar insumo" value={null} />
-              {insumos.map((insumo, index) => (
-                <Picker.Item key={index} label={insumo.nombre} value={insumo.id_insumo} />
-              ))}
+              {insumos.filter(insumo => insumo.cantidad > 0).map((insumo, index) => (
+    <Picker.Item key={index} label={insumo.nombre} value={insumo.id_insumo} />
+  ))}
             </Picker>
           </View>
 
@@ -152,20 +149,25 @@ const granTotal=iva+total
 
                 </View>
                 <View>
-                <Text >SubTotal: {formatearValores(total)}</Text>
-                <Text >Iva 19%: {formatearValores(iva)}</Text>
-                <Text >Total: {formatearValores(granTotal)}</Text>
+                  <Text >SubTotal: {formatearValores(total)}</Text>
+                  <Text >Iva 19%: {formatearValores(iva)}</Text>
+                  <Text style={{fontWeight: 'bold', fontSize:22}}>Total: {formatearValores(granTotal)}</Text>
                 </View>
               </>
             )}
           </View>
-          <Text></Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10 }}>
 
+            <View style={{ flexDirection: 'row', marginRight: 10 }}>
+              <Button title="Agregar" onPress={handleAddVenta} />
 
-          <Button title="Agregar" onPress={handleAddVenta} />
-          <Text></Text>
-          <Button title="Cerrar" onPress={toggleModalVisibility} />
+            </View>
 
+            <View style={{ flexDirection: 'row' }}>
+
+              <Button title="Cerrar" onPress={toggleModalVisibility} />
+            </View>
+          </View>
 
         </View>
       </View>
@@ -266,7 +268,7 @@ const styles = StyleSheet.create({
     margin: 12,
     borderWidth: 1,
     padding: 10,
-    width: 200, // Puedes ajustar el ancho según tu diseño
+    width: 350, // Puedes ajustar el ancho según tu diseño
   },
   modalText: {
     marginBottom: 15,
@@ -274,7 +276,7 @@ const styles = StyleSheet.create({
   },
   picker: {
     height: 25,
-    width: 200,
+    width: 350,
 
   },
   titleDash: {
@@ -295,7 +297,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'black',
     padding: 10,
-    width: 390,
+    width: 350,
     height: 160,
   },
   row: {

@@ -136,7 +136,7 @@ useEffect(() => {
 
   return (
     <View style={styles.container}>
- {/* <Nav menuVisible={menuVisible} toggleMenu={toggleMenu} />  */}
+<Nav title="Dashboard" /> 
 
 <ScrollView contentContainerStyle={styles.scrollContainer}>
 
@@ -159,7 +159,6 @@ useEffect(() => {
 
       <View style={styles.content}>
     <Text></Text>
-        <Text style={styles.titleDash}>Dashboard</Text>
         <View style={styles.card}>
             <Text>Ventas: {ventas}</Text>
             <Text>Compras: {compras}</Text> 

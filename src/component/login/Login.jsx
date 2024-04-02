@@ -41,7 +41,7 @@ const Login = () => {
         if(data.user.nombre_rol==="Administrador"){
           const username = data.user.nombre;
           setUsername(username);
-          navigation.navigate('MainStack');
+          navigation.navigate('Home');
           
         }else{
           setErrorMessage(data.message || "Solo los administradores pueden acceder.");
@@ -59,7 +59,7 @@ const Login = () => {
   
   return (
     <View style={styles.container}>
-            <Image source={publugrafitLogin} style={styles.logo} />
+            <Image source={publugrafitLogin} style={styles.logo} /> 
 
       <TextInput
         style={styles.input}

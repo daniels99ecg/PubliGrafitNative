@@ -15,18 +15,29 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/PubliGrafit2.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.danielecg99.Publigratif"
+      "package": "com.danielecg99.Publigratif",
+      "runtimeVersion": "1.0.0"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "1ff7bbf4-e264-4680-9222-069917e8a1dd"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/1ff7bbf4-e264-4680-9222-069917e8a1dd"
     }
-   
   }
 }
