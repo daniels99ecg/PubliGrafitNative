@@ -1,11 +1,11 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import Constants from 'expo-constants';
-import { Routes, Route } from "react-router-native";
+// import { Routes, Route } from "react-router-native";
 import Login from "./login/Login.jsx";
 import RepoList from './usuario/RepositoryList.jsx';
 import Dashboard from "./dashboard/Dashboard.jsx";
-import MainDashboard from "./dashboard/MainDashboard.jsx";
+// import MainDashboard from "./dashboard/MainDashboard.jsx";
 
 import Orden from "./ordenes/Orden.jsx";
 import Home from "./home/Home.jsx"
@@ -14,7 +14,7 @@ import { UserProvider } from "../context/usuario/userContext.jsx";
 import { DashboardProvider } from "../context/dashboard/dashboardContext.jsx";
 import { createStackNavigator } from '@react-navigation/stack';
 import FooterAbajo from "./nav/FooterAbajo.jsx";
-import Nav from "./nav/Nav.jsx";
+// import Nav from "./nav/Nav.jsx";
 import { NavigationContainer } from '@react-navigation/native';
 
 const Stack = createStackNavigator();
@@ -26,7 +26,7 @@ const Main = () => {
     <DashboardProvider>
       <UserProvider>
         <NavigationContainer>
-          <Stack.Navigator>
+          <Stack.Navigator initialRouteName="Login">
             <Stack.Screen name="Login" component={Login} options={{ 
               headerShown: false,
               headerBackVisible: false

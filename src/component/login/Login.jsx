@@ -4,8 +4,8 @@ import { View, TextInput, Button, Text, StyleSheet, Image   } from "react-native
 import { useNavigation } from "@react-navigation/native"; // Importa la función useNavigation
 
 import { useUser } from "../../context/usuario/userContext";
-import axios from 'axios';
-import Home from '../home/Home'
+// import axios from 'axios';
+// import Home from '../home/Home'
 
 import publugrafitLogin from '../../../public/img/PubliGrafit2.png'
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
@@ -42,6 +42,7 @@ const Login = () => {
           const username = data.user.nombre;
           setUsername(username);
           navigation.navigate('Home');
+         
           
         }else{
           setErrorMessage(data.message || "Solo los administradores pueden acceder.");
@@ -59,7 +60,7 @@ const Login = () => {
   
   return (
     <View style={styles.container}>
-            <Image source={publugrafitLogin} style={styles.logo} /> 
+             <Image source={publugrafitLogin} style={styles.logo} />   
 
       <TextInput
         style={styles.input}
