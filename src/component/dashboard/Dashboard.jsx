@@ -49,6 +49,8 @@ const chartConfig = {
 const [datos3, setDatos3] = useState([]);
 const [datos4, setDatos4] = useState([]);
 
+const [datos5, setDatos5] = useState([]);
+const [datos6, setDatos6] = useState([]);
 
 const fetchData3 = async () => {
   try {
@@ -67,13 +69,31 @@ const fetchData3 = async () => {
 };
 
 
+
+const fetchData4 = async () => {
+  try {
+    const response = await axios.get("https://danielg99.alwaysdata.net/compras/compradeldia");
+    const jsonData4 = response.data;
+
+    const labels = jsonData4.map(item => item.mes);
+    const valores = jsonData4.map(item => item.totalComprasMes);
+
+    setDatos5(labels); 
+    setDatos6(valores)
+   
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
+
+
 useEffect(() => {
   const fetchDataAll = async () => {
     try {
       await fetchData();
       await fetchData2();
       await fetchData3();
-      // await fetchData4();
+      await fetchData4();
     } catch (error) {
       console.error("Error fetching data: ", error);
     }
@@ -87,11 +107,7 @@ useEffect(() => {
   const compras = parseFloat(datos2) || 0;
 
 
-  const total = ventas + compras;
-  const ventasPorcentaje = (ventas / total) * 100;
-  const comprasPorcentaje = (compras / total) * 100;
-  
-  
+
   const dataNuevo = [
     {
       name: "Ventas",
@@ -110,11 +126,6 @@ useEffect(() => {
   ];
 
  
-
-
-  // const toggleMenu = () => {
-  //   setMenuVisible(!menuVisible); // Cambiar el estado de visibilidad del menú
-  // };
   const datosParaGrafica = {
            
     labels: datos3,
@@ -125,15 +136,28 @@ useEffect(() => {
     ]
   
   };
-  // const handleHomeTabPress = () => {
-  //   // Aquí puedes ejecutar cualquier lógica que desees cuando se presione la pestaña "Home"
-  //   navigation("/Home")
-  //   // Por ejemplo, puedes navegar a una pantalla diferente
-  //   // navigation.navigate('OtraPantalla');
-  // };
- 
+
+  const datosParaGraficaDia = {
+           
+    labels: datos5,
+    datasets: [
+      {
+        data: datos6
+      }
+    ]
+  
+  };
 
 
+  function formatearValores(amount) {
+    return new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency: 'ARS',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  }
+  
   return (
     <View style={styles.container}>
 <Nav title="Dashboard" /> 
@@ -142,26 +166,11 @@ useEffect(() => {
 
         <View style={styles.container}>
 
-{/* <Tab.Navigator>
-      <Tab.Screen
-        name="Home"
-        component={Home}
-        listeners={({ navigation }) => ({
-          tabPress: event => {
-            // Cancela la acción de navegación predeterminada
-            event.preventDefault();
-            // Ejecuta tu función personalizada
-            handleHomeTabPress({ navigation });
-          },
-        })}
-      />
-    </Tab.Navigator> */}
-
       <View style={styles.content}>
     <Text></Text>
         <View style={styles.card}>
-            <Text>Ventas: {ventas}</Text>
-            <Text>Compras: {compras}</Text> 
+            <Text>Ventas: {formatearValores(ventas)}</Text>
+            <Text>Compras: {formatearValores(compras)}</Text> 
             <PieChart
   data={dataNuevo}
   width={300}
@@ -188,23 +197,24 @@ useEffect(() => {
       chartConfig={chartConfig}
     />
   </ScrollView>   
-    {/* <BarChart
-      frontColor="#02b2af"
-      data={datos3}
-      width={280}
-      height={300}
-    /> */}
+   
   </View> 
 
-   {/* <View style={styles.card} accessibilityLabel="Compras">
+  <View style={styles.card} accessibilityLabel="Ventas">
     <Text>Compras Mes</Text>
+
+    <ScrollView horizontal={true}>
     <BarChart
-      frontColor="#2e96ff"
-      data={datos4}
-      width={280}
-      height={300}
+      data={datosParaGraficaDia}
+      width={650} // Ancho del gráfico
+      height={350} // Alto del gráfico
+      yAxisLabel="$"
+      chartConfig={chartConfig}
     />
-  </View> */}
+  </ScrollView>   
+   
+  </View> 
+  
 </View> 
 
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, StatusBar, TouchableHighlight, ScrollView,Modal, Button, TextInput ,TouchableOpacity, SafeAreaView  } from "react-native";
+import { CheckBox } from '@rneui/themed';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 // import { useNavigate } from "react-router-native";
 import Nav from "../nav/Nav";
@@ -8,13 +9,14 @@ import { Alert } from 'react-native';
 import FooterAbajo from "../nav/FooterAbajo"
 import CreateOrden from "./CreateOrden";
 const Orden =()=>{
+  const [isChecked, setIsChecked] = useState({});
   const [menuVisible, setMenuVisible] = useState(false); 
   const [isModalVisible, setModalVisible] = useState(false);
   const [ordenEditando, setOrdenEditando] = useState(null);
   const [isModalVisibleUpdate, setModalVisibleUpdate] = useState(false);
   const [busqueda, setBusqueda] = useState(''); // Estado para el texto de búsqueda
   const [paginaActual, setPaginaActual] = useState(1);
-  const ordenesPorPagina = 2; 
+  const ordenesPorPagina = 4; 
 
   const [nombreCliente, setNombreCliente] = useState('');
   const [nombreProducto, setNombreProducto] = useState('');
@@ -113,9 +115,9 @@ const Orden =()=>{
 
 
   const [ordensActualizar, setOrdensActualizar] = useState([]);
-  const totalupdate = ordensActualizar && ordensActualizar.detalles ? ordensActualizar.detalles.reduce((acc, current) => acc + (current.cantidad * current.precio + (parseInt(incrementoVenta) || 0) ), 0) : 0;
+  const totalupdate = ordensActualizar && ordensActualizar.detalles ? ordensActualizar.detalles.reduce((acc, current) => acc + (current.cantidad * current.precio ), 0) : 0;
   const totalupdate2 = nuevosInsumosSeleccionadosUpdate ? nuevosInsumosSeleccionadosUpdate.reduce((acc, current) => acc + (current.cantidad * current.precio), 0) : 0;
-  const SumaTotal = totalupdate + totalupdate2
+  const SumaTotal = totalupdate + totalupdate2+(parseInt(incrementoVenta)||0)
   
   const iva=SumaTotal*0.19
   const granTotal=iva+SumaTotal
@@ -351,16 +353,24 @@ console.log(ordenesSeleccionadas)
   }
   
     
-
   const handleEditInsumoQuantity = (newQuantity, index) => {
-    const updatedInsumos = [...nuevosInsumosSeleccionadosUpdate];
-    updatedInsumos[index].cantidad = newQuantity.replace(/[^0-9]/g, '');
+    const updatedInsumos = [...ordensActualizar.detalles];
+
+    // Verificar si updatedInsumos[index] está definido antes de actualizar sus propiedades
+    if (ordensActualizar && ordensActualizar.detalles && ordensActualizar.detalles[index]) {
+
+      updatedInsumos[index].cantidad = newQuantity.replace(/[^0-9]/g, '');
+      updatedInsumos[index].precioTotal = updatedInsumos[index].cantidad * updatedInsumos[index].precio;
   
-    // Calcular el precio total del insumo basado en la nueva cantidad
-    updatedInsumos[index].precioTotal = updatedInsumos[index].cantidad * updatedInsumos[index].precio;
-  
-    setNuevosInsumosSeleccionadosUpdate(updatedInsumos);
+      // Actualizar el estado con la nueva copia del estado
+      setNuevosInsumosSeleccionadosUpdate([...updatedInsumos]);
+    } else {
+      console.error(`El insumo en el índice ${index} no está definido.`);
+    }
   };
+  
+  
+  
   
 
   useEffect(() => {
@@ -389,6 +399,7 @@ console.log(ordenesSeleccionadas)
         const errorData = await response.json();
         // console.error('Error al actualizar la operación:', errorData.error);
         Alert.alert(errorData.error);
+        await fetchOrdenes();
       }
     } catch (error) {
       console.error('Error de red:', error);
@@ -404,21 +415,8 @@ console.log(ordenesSeleccionadas)
 
   const indiceFinal = paginaActual * ordenesPorPagina;
   const indiceInicial = indiceFinal - ordenesPorPagina;
-  const ordenesActuales = ordenesFiltradas.slice(indiceInicial, indiceFinal);
-  const totalPaginas = Math.ceil(ordenesFiltradas.length / ordenesPorPagina);
-  const botonesPaginas = [];
-  
-  for (let numeroPagina = 1; numeroPagina <= totalPaginas; numeroPagina++) {
-    botonesPaginas.push(
-      <TouchableOpacity
-        key={numeroPagina}
-        onPress={() => setPaginaActual(numeroPagina)}
-        style={[styles.botonPagina, paginaActual === numeroPagina ? styles.botonPaginaActivo : {}]}
-      >
-        <Text style={paginaActual === numeroPagina ? styles.textoPaginaActivo : {}}>{numeroPagina}</Text>
-      </TouchableOpacity>
-    );
-  }
+  const ordenesActuales = ordenesFiltradas.reverse(indiceInicial, indiceFinal);
+
 
 
   function formatearValores(amount) {
@@ -429,6 +427,7 @@ console.log(ordenesSeleccionadas)
       maximumFractionDigits: 0,
     }).format(amount);
   }
+
   return (
     <View style={styles.container}>
          <Nav title="Listar Ordenes"/> 
@@ -456,27 +455,33 @@ console.log(ordenesSeleccionadas)
               <Text style={styles.cardText}>Cliente: <Text style={{fontWeight:'normal'}}>{repo.cliente.nombre}</Text></Text> 
               <Text style={styles.cardText}>Incremento de venta:<Text style={{fontWeight:'normal'}}> {formatearValores(repo.mano_obra)}</Text></Text>
               <Text style={styles.cardText}>Costo: <Text style={{fontWeight:'normal'}}>{formatearValores(repo.costo_final_producto)}</Text></Text>
-              <View style={styles.pickerContainerOrdenes}>
-
-        <Picker
-          selectedValue={repo.operacion}
-          style={styles.picker}
-          onValueChange={(itemValue, itemIndex) => {
-            actualizarOperacion(repo.id_ft, itemValue);
-}}>
-          <Picker.Item label={repo.operacion} value={repo.operacion} />
-          <Picker.Item label="Realizada" value="Realizada" />
-          {/* Agrega más opciones según sea necesario */}
-        </Picker>
-        </View>
+              <Text style={styles.cardText}>Operacion:<Text style={{fontWeight:'normal'}}>{repo.operacion}</Text> </Text> 
+   
 
         <View style={styles.buttonContainer}>
+  
+        <CheckBox 
+  size={30}
+  checked={!!isChecked[repo.id_ft]} // Usa el estado actual para este CheckBox
+  onPress={() => {
+    // Actualiza el estado específico para este CheckBox antes de llamar a actualizarOperacion
+    const newState = !isChecked[repo.id_ft];
+    setIsChecked(prevState => ({
+      ...prevState,
+      [repo.id_ft]: newState
+    }));
+    if (newState) {
+      actualizarOperacion(repo.id_ft, "Realizada");
+    }
+  }}
+/>
+
+  
         <TouchableOpacity onPress={() => {
           fetchActualizarOrdenes(repo.id_ft); // Establece la orden que se está editando
           toggleModalVisibilityUpdate(); // Abre el modal
         }}
         style={styles.button}
-
         >
           
           <Icon name="edit" size={30} color="blue" />
@@ -488,9 +493,9 @@ console.log(ordenesSeleccionadas)
       </View>
             </View>
           )) }
-            <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 10 }}>
+            {/* <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
             {botonesPaginas}
-          </View>
+          </View> */}
         </View>
 
      </View>
@@ -533,9 +538,7 @@ console.log(ordenesSeleccionadas)
     <View style={styles.centeredView}>
         <View style={styles.modalView}>
             <Text style={styles.modalText}>Editar Orden</Text>
-            {/* Aquí puedes mostrar los campos de la orden para edición */}
-            <Text>ID Orden: {ordenEditando ? ordenEditando.id_ft : ""}</Text>
-
+           
             <View style={styles.pickerContainer}>
   <Picker
     selectedValue={nombreCliente}
@@ -617,11 +620,11 @@ console.log(ordenesSeleccionadas)
           {ordensActualizar.detalles.map((insumo, index) => (
             <View style={styles.tableRow} key={'existente-' + index}>
               <Text style={styles.tableCell}>{insumo.fk_insumo}</Text>
-              <Text style={styles.tableCell}>{insumo.insumo.nombre}</Text>
+              <Text style={styles.tableCell}>{insumo.insumo?.nombre}</Text>
               <TextInput 
                 style={styles.tableCellInput} 
                 onChangeText={(text) => handleEditInsumoQuantity(text, index)} 
-                value={String(insumo.cantidad)}  
+                value={String(insumo.cantidad )}  
                 keyboardType="numeric"
               />
               <Text style={styles.tableCell}>{insumo.precio * insumo.cantidad}</Text>
@@ -651,33 +654,32 @@ console.log(ordenesSeleccionadas)
       <View>
                 <Text >SubTotal: {formatearValores(SumaTotal)}</Text>
                 <Text >Iva 19%: {formatearValores(iva)}</Text>
-                <Text >Total: {formatearValores(granTotal)}</Text>
+                <Text style={{fontWeight: 'bold', fontSize:22}}>Total: {formatearValores(granTotal)}</Text>
                 </View>
     </>
   )}
 </View>
+<View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10 }}>
 
-<Text></Text>
-            {/* Mostrar otros campos de la orden para edición */}
+<View style={{ flexDirection: 'row', marginRight: 10 }}>
+
             <Button title="Actualizar" onPress={handleUpdateOrder} />
-
-            <Text></Text>
+</View>
+            <View style={{ flexDirection: 'row' }}>
             <Button title="Cerrar" onPress={toggleModalVisibilityUpdate} />
+            </View>
         </View>
     </View>
-    
+    </View>
 </Modal>
 
       </ScrollView>
       <SafeAreaView style={styles.containerboton}>
-      {/* <Button title="+"  onPress={toggleModalVisibility} /> */}
-
       <TouchableOpacity style={styles.boton} onPress={toggleModalVisibility}>
       <Text>
-        <Icon name="add" size={30} color="#FFF" /> {/* Usamos el ícono 'star' como ejemplo */}
+        <Icon name="add" size={30} color="#FFF" /> 
       </Text>
       </TouchableOpacity>
-  
       </SafeAreaView>
 
       <FooterAbajo/> 
@@ -784,7 +786,7 @@ input: {
   margin: 12,
   borderWidth: 1,
   padding: 10,
-  width: 200, // Puedes ajustar el ancho según tu diseño
+  width: 350, // Puedes ajustar el ancho según tu diseño
 },
 modalText: {
   marginBottom: 15,
@@ -792,7 +794,7 @@ modalText: {
 }, 
 picker: {
  
-  width: 200,
+  width: 350,
  
 },
 titleDash: {
@@ -813,8 +815,8 @@ table: {
   borderWidth: 1,
   borderColor: 'black',
   padding: 10,
-  width: 390,
-  height:150,
+  width: 350,
+  height:160,
 },  
  row: {
   flexDirection: 'row',
@@ -864,8 +866,8 @@ errorText:{
   color:"red"
 },
 boton:{
-  position: 'relative', // Posición absoluta para el botón
-  bottom: 0, // Posicionado en la parte inferior de la pantalla
+  position: 'absolute', // Posición absoluta para el botón
+  bottom: 65, // Posicionado en la parte inferior de la pantalla
   left: 300, // Al lado izquierdo de la pantalla
   width: 60, // Ancho del círculo
   height: 60, // Altura del círculo
@@ -877,8 +879,10 @@ boton:{
 buttonContainer: {
   flexDirection: 'row',
   justifyContent: 'center',
+  alignItems: 'center',
   marginTop: 10, // Ajusta el margen superior según sea necesario
-},button: {
+},
+button: {
   marginHorizontal: 5, // Esto añade espacio a ambos lados del botón
 },
 inputBusqueda: {

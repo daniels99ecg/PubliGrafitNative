@@ -8,7 +8,7 @@ export const DashboardProvider = ({ children }) => {
     const [datos, setDatos] = useState([]);
     const [datos2, setDatos2] = useState([]);
     const [datos3, setDatos3] = useState([]);
-    // const [datos4, setDatos4] = useState([]);
+    const [datos5, setDatos5] = useState([]);
 
     const fetchData = async () => {
         try {
@@ -56,23 +56,31 @@ export const DashboardProvider = ({ children }) => {
       
       
 
-      // const fetchData4 = async () => {
-      //   try {
-      //     const response = await axios.get("https://danielg99.alwaysdata.net/compras/compradeldia");
-      //     const jsonData4 = response.data;
+      const fetchData4 = async () => {
+        try {
+          const response = await axios.get("https://danielg99.alwaysdata.net/compras/compradeldia");
+          const jsonData4 = response.data;
       
-      //     // Transformar los datos para la gráfica de barras
-      //     const datosParaGrafica = jsonData4.map(item => ({
-      //       value: item.totalComprasMes,
-      //       label: item.mes
-      //     }));
+          const labels = jsonData4.map(item => item.mes);
+          const valores = jsonData4.map(item => item.totalComprasMes);
       
-      //     setDatos4(datosParaGrafica); 
-      //     console.log(datosParaGrafica); // Verificar los datos transformados
-      //   } catch (error) {
-      //     console.error("Error fetching data:", error);
-      //   }
-      // };
+          const datosParaGraficaCompras = {
+           
+              labels: labels,
+              datasets: [
+                {
+                  data: valores
+                }
+              ]
+          
+          };
+      
+          setDatos4(datosParaGraficaCompras); 
+          console.log(datosParaGraficaCompras); // Verificar los datos transformados
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
 
   return (
     <DashboardContext.Provider value={{datos,datos2,datos3,fetchData, fetchData2, fetchData3}}>

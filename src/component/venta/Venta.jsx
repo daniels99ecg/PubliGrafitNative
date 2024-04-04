@@ -14,7 +14,7 @@ const Venta =()=>{
 
 
   const [paginaActual, setPaginaActual] = useState(1);
-  const ordenesPorPagina = 3; // La cantidad de órdenes que quieres mostrar por página
+  const ordenesPorPagina = 4; // La cantidad de órdenes que quieres mostrar por página
 
  
   async function fetchOrdenes() {
@@ -41,20 +41,7 @@ const Venta =()=>{
   const indiceFinal = paginaActual * ordenesPorPagina;
 const indiceInicial = indiceFinal - ordenesPorPagina;
 const ordenesActuales = ordenesFiltradas.slice(indiceInicial, indiceFinal);
-const totalPaginas = Math.ceil(ordenesFiltradas.length / ordenesPorPagina);
-const botonesPaginas = [];
 
-for (let numeroPagina = 1; numeroPagina <= totalPaginas; numeroPagina++) {
-  botonesPaginas.push(
-    <TouchableOpacity
-      key={numeroPagina}
-      onPress={() => setPaginaActual(numeroPagina)}
-      style={[styles.botonPagina, paginaActual === numeroPagina ? styles.botonPaginaActivo : {}]}
-    >
-      <Text style={paginaActual === numeroPagina ? styles.textoPaginaActivo : {}}>{numeroPagina}</Text>
-    </TouchableOpacity>
-  );
-}
 
 function formatearValores(amount) {
   return new Intl.NumberFormat('es-AR', {
@@ -95,9 +82,7 @@ function formatearValores(amount) {
             </View>
             
           )) }
-            <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 10 }}>
-            {botonesPaginas}
-          </View>
+           
 
         </View>
 
