@@ -43,7 +43,12 @@ const chartConfig = {
  
   backgroundGradientFromOpacity: 0,
   backgroundGradientTo: "white",
+  decimalPlaces: 0,
+
+  formatYLabel: (value) => new Intl.NumberFormat('es-ES').format(value),
+
   color: (opacity = 1) => `rgba(1, 1, 1, ${opacity})`,
+
 
 };
 const [datos3, setDatos3] = useState([]);
@@ -51,6 +56,12 @@ const [datos4, setDatos4] = useState([]);
 
 const [datos5, setDatos5] = useState([]);
 const [datos6, setDatos6] = useState([]);
+
+const [datos7, setDatos7] = useState([]);
+const [datos8, setDatos8] = useState([]);
+
+const [datos9, setDatos9] = useState([]);
+const [datos10, setDatos10] = useState([]);
 
 const fetchData3 = async () => {
   try {
@@ -87,6 +98,39 @@ const fetchData4 = async () => {
 };
 
 
+const fetchData5 = async () => {
+  try {
+    const response = await axios.get("https://danielg99.alwaysdata.net/fichatecnica/ordensemana");
+    const jsonData5 = response.data;
+
+    const labels = jsonData5.map(item => item.diaSemana);
+    const valores = jsonData5.map(item => item.totalVentasDia);
+
+    setDatos7(labels); 
+    setDatos8(valores)
+   
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
+
+const fetchData6 = async () => {
+  try {
+    const response = await axios.get("https://danielg99.alwaysdata.net/compras/comprasemana");
+    const jsonData5 = response.data;
+
+    const labels = jsonData5.map(item => item.diaSemana);
+    const valores = jsonData5.map(item => item.totalComprasDia);
+
+    setDatos9(labels); 
+    setDatos10(valores)
+   
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
+
+
 useEffect(() => {
   const fetchDataAll = async () => {
     try {
@@ -94,6 +138,8 @@ useEffect(() => {
       await fetchData2();
       await fetchData3();
       await fetchData4();
+      await fetchData5();
+      await fetchData6();
     } catch (error) {
       console.error("Error fetching data: ", error);
     }
@@ -148,6 +194,28 @@ useEffect(() => {
   
   };
 
+  const datosParaGraficaDiasemana = {
+           
+    labels: datos7,
+    datasets: [
+      {
+        data: datos8
+      }
+    ]
+  
+  };
+
+  const datosParaGraficaDiasemanaCompra = {
+           
+    labels: datos9,
+    datasets: [
+      {
+        data: datos10
+      }
+    ]
+  
+  };
+
 
   function formatearValores(amount) {
     return new Intl.NumberFormat('es-AR', {
@@ -157,7 +225,7 @@ useEffect(() => {
       maximumFractionDigits: 0,
     }).format(amount);
   }
-  
+
   return (
     <View style={styles.container}>
 <Nav title="Dashboard" /> 
@@ -194,8 +262,10 @@ useEffect(() => {
       width={650} // Ancho del gráfico
       height={350} // Alto del gráfico
       yAxisLabel="$"
+      yAxisSuffix=""
       chartConfig={chartConfig}
     />
+    
   </ScrollView>   
    
   </View> 
@@ -215,6 +285,39 @@ useEffect(() => {
    
   </View> 
   
+
+  <View style={styles.card} accessibilityLabel="Ventas">
+    <Text>Ventas Semana</Text>
+
+    <ScrollView horizontal={true}>
+    <BarChart
+      data={datosParaGraficaDiasemana}
+      width={650} // Ancho del gráfico
+      height={350} // Alto del gráfico
+      yAxisLabel="$"
+      chartConfig={chartConfig}
+
+    />
+   
+  </ScrollView>   
+   
+  </View>
+
+
+  <View style={styles.card} accessibilityLabel="Ventas">
+    <Text>Compras Semana</Text>
+
+    <ScrollView horizontal={true}>
+    <BarChart
+      data={datosParaGraficaDiasemanaCompra}
+      width={650} // Ancho del gráfico
+      height={350} // Alto del gráfico
+      yAxisLabel="$"
+      chartConfig={chartConfig}
+    />
+  </ScrollView>   
+   
+  </View>
 </View> 
 
 
@@ -255,6 +358,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     justifyContent: 'center', // Asegura que el contenido se centre verticalmente
     alignItems: 'center',
+    
   },
  
 

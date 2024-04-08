@@ -81,9 +81,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace 'com.danielecg99.Publigratif'
+    namespace 'com.danielecg99.Publigrafit'
     defaultConfig {
-        applicationId 'com.danielecg99.Publigratif'
+        applicationId 'com.danielecg99.Publigrafit'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

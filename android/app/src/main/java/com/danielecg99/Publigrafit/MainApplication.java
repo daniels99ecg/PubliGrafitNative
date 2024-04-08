@@ -1,4 +1,4 @@
-package com.danielecg99.Publigratif;
+package com.danielecg99.Publigrafit;
 
 import android.app.Application;
 import android.content.res.Configuration;

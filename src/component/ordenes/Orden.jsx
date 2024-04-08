@@ -14,9 +14,10 @@ const Orden =()=>{
   const [isModalVisible, setModalVisible] = useState(false);
   const [ordenEditando, setOrdenEditando] = useState(null);
   const [isModalVisibleUpdate, setModalVisibleUpdate] = useState(false);
+  const [isModalVisibleInfo, setModalVisibleInfo] = useState(false);
   const [busqueda, setBusqueda] = useState(''); // Estado para el texto de búsqueda
   const [paginaActual, setPaginaActual] = useState(1);
-  const ordenesPorPagina = 4; 
+  const ordenesPorPagina = 10; 
 
   const [nombreCliente, setNombreCliente] = useState('');
   const [nombreProducto, setNombreProducto] = useState('');
@@ -34,23 +35,31 @@ const Orden =()=>{
 
   const handleSelectNewOrderUpdate = (orderId) => {
     const insumoSeleccionado = insumos.find(insumo => insumo.id_insumo === orderId);
-    
     const insumoConCantidad = { ...insumoSeleccionado, cantidad: "1" }; // Añadir campo de cantidad
   
-    const existingIndex =  nuevosInsumosSeleccionadosUpdate.findIndex(insumo => insumo.id_insumo === orderId);
+    const existingIndex = nuevosInsumosSeleccionadosUpdate.findIndex(insumo => insumo.id_insumo === orderId);
     if (existingIndex === -1) {
       setNuevosInsumosSeleccionadosUpdate([...nuevosInsumosSeleccionadosUpdate, insumoConCantidad]);
     } else {
       console.log("Este insumo ya ha sido seleccionado.");
     }
   };
+  
 
   // Función para manejar la eliminación de nuevos insumos
   const handleRemoveNewOrderUpdate = (indexToRemove) => {
     setNuevosInsumosSeleccionadosUpdate(nuevosInsumosSeleccionadosUpdate.filter((_, index) => index !== indexToRemove));
   };
 
-
+  const handleRemoveNewOrderList = (indexToRemove) => {
+    const newDetalles = ordensActualizar.detalles.filter((_, index) => index !== indexToRemove);
+  
+    setOrdensActualizar(prev => ({
+      ...prev,
+      detalles: newDetalles,
+    }));
+  };
+  
 
   const [errors, setErrors] = useState({});
 
@@ -80,6 +89,10 @@ const Orden =()=>{
       formIsValid = false;
     } else if (isNaN(incrementoVenta)) {
       newErrors.incrementoVenta = "El incremento de venta debe ser un número.";
+      formIsValid = false;
+    }else if (parseInt(incrementoVenta, 10) <= 0) {
+      // Asegurándose de que incrementoVenta no sea cero ni un número negativo
+      newErrors.incrementoVenta = "El incremento de venta debe ser mayor a cero.";
       formIsValid = false;
     }
   
@@ -135,6 +148,7 @@ const Orden =()=>{
 
 
   const handleUpdateOrder = async () => {
+    
     const data = {
       nombre_ficha: nombreProducto,
        fk_cliente: nombreCliente,
@@ -172,6 +186,8 @@ const Orden =()=>{
         // Por ejemplo, cerrar el modal de edición
         toggleModalVisibilityUpdate();
         await fetchOrdenes(); // Actualizar la lista de órdenes después de la actualización
+        setNuevosInsumosSeleccionadosUpdate([]);
+        setOrdenesSeleccionadas([])
       } else {
         const errorData = await response.json();
 
@@ -208,18 +224,29 @@ const Orden =()=>{
   const toggleModalVisibility = () => {
       setModalVisible(!isModalVisible);
        // Cerrar el modal tras registrar la venta, independientemente del resultado de la solicitud
-
+       setErrors({
+        nombreProducto: null,
+        descripcion: null,
+        incrementoVenta: null
+      });
   setNombreCliente('');
   setNombreProducto('');
   setDescripcion('');
   setIncrementoVenta('');
   setOrdenesSeleccionadas([])
+  setNuevosInsumosSeleccionadosUpdate([]);
+
   };
 
 
   const toggleModalVisibilityUpdate = () => {
     setModalVisibleUpdate(!isModalVisibleUpdate);
 };
+
+const toggleModalVisibilityInfo = () => {
+  setModalVisibleInfo(!isModalVisibleInfo);
+};
+
 const total = ordenesSeleccionadas.reduce((acc, current) => acc + (current.cantidad * current.precio + (parseInt(incrementoVenta) || 0) ), 0);
 
   const handleAddVenta = async () => {
@@ -245,6 +272,9 @@ const total = ordenesSeleccionadas.reduce((acc, current) => acc + (current.canti
   };
 
     const submitVenta = async () => {
+      const fechaActual = new Date();
+      const fechaFormateada = `${fechaActual.getFullYear()}-${(fechaActual.getMonth() + 1).toString().padStart(2, '0')}-${fechaActual.getDate().toString().padStart(2, '0')} ${fechaActual.getHours().toString().padStart(2, '0')}:${fechaActual.getMinutes().toString().padStart(2, '0')}:${fechaActual.getSeconds().toString().padStart(2, '0')}`;
+
       console.log("La orden es: ", ordenesSeleccionadas);
       const data = {
         nombre_ficha: nombreProducto,
@@ -253,6 +283,7 @@ const total = ordenesSeleccionadas.reduce((acc, current) => acc + (current.canti
         costo_final_producto: total,
         detalle: descripcion,
         mano_obra: incrementoVenta,
+        fecha:fechaFormateada,
         insumo: ordenesSeleccionadas.map(orden => ({
           fk_insumo: orden.id_insumo,
           cantidad: orden.cantidad,
@@ -314,6 +345,15 @@ const total = ordenesSeleccionadas.reduce((acc, current) => acc + (current.canti
   };
 
   const handleQuantityChange = (newQuantity, index) => {
+    if (!newQuantity || /^\D+$/.test(newQuantity) || parseInt(newQuantity) <= 0) {
+      // Si newQuantity es inválido (vacío, no numérico o menor o igual a cero)
+      // Establecerlo como '1' o realizar alguna otra acción
+      newQuantity = '1';
+  } else {
+      // Eliminar ceros adicionales al principio si los hay
+      newQuantity = parseInt(newQuantity, 10).toString();
+  }
+  
     const updatedOrdenes = ordenesSeleccionadas.map((item, i) => {
       if (i === index) {
         return { ...item, cantidad: newQuantity.replace(/[^0-9]/g, '') }; // Solo permite números
@@ -337,41 +377,85 @@ console.log(ordenesSeleccionadas)
 
   async function fetchEliminarOrdenes(id_ft) {
     try {
-      const response = await fetch(`${apiUrl}fichaTecnica/delete/${id_ft}`, {
-        method: "DELETE",
-      });
-      if (response.ok) {
-        console.log(`Orden con id_ft ${id_ft} eliminada correctamente.`);
-        await fetchOrdenes();
-        // Aquí puedes actualizar el estado o realizar otras acciones necesarias después de eliminar la orden
-      } else {
-        console.error("Error al intentar eliminar la orden.");
-      }
+      Alert.alert(
+        'Confirmar Eliminación',
+        '¿Estás seguro de que deseas eliminar esta orden?',
+        [
+          {
+            text: 'Cancelar',
+            style: 'cancel',
+          },
+          {
+            text: 'Eliminar',
+            onPress: async () => {
+              const response = await fetch(`${apiUrl}fichaTecnica/delete/${id_ft}`, {
+                method: 'DELETE',
+              });
+              if (response.ok) {
+                console.log(`Orden con id_ft ${id_ft} eliminada correctamente.`);
+                await fetchOrdenes();
+                // Aquí puedes actualizar el estado o realizar otras acciones necesarias después de eliminar la orden
+              } else {
+                console.error('Error al intentar eliminar la orden.');
+              }
+            },
+          },
+        ],
+        { cancelable: false }
+      );
     } catch (error) {
-      console.error("Error al eliminar la orden:", error);
+      console.error('Error al eliminar la orden:', error);
     }
   }
   
     
-  const handleEditInsumoQuantity = (newQuantity, index) => {
-    const updatedInsumos = [...ordensActualizar.detalles];
-
-    // Verificar si updatedInsumos[index] está definido antes de actualizar sus propiedades
-    if (ordensActualizar && ordensActualizar.detalles && ordensActualizar.detalles[index]) {
-
-      updatedInsumos[index].cantidad = newQuantity.replace(/[^0-9]/g, '');
-      updatedInsumos[index].precioTotal = updatedInsumos[index].cantidad * updatedInsumos[index].precio;
+  const handleEditInsumoQuantity = (text, index) => {
+    // Verificar si el valor ingresado es 0
+    if (!newQuantity || /^\D+$/.test(newQuantity) || parseInt(newQuantity) <= 0) {
+      // Si newQuantity es inválido (vacío, no numérico o menor o igual a cero)
+      // Establecerlo como '1' o realizar alguna otra acción
+      newQuantity = '1';
+  } else {
+      // Eliminar ceros adicionales al principio si los hay
+      newQuantity = parseInt(newQuantity, 10).toString();
+  }
   
-      // Actualizar el estado con la nueva copia del estado
-      setNuevosInsumosSeleccionadosUpdate([...updatedInsumos]);
-    } else {
-      console.error(`El insumo en el índice ${index} no está definido.`);
-    }
+    // Copiar el estado actual
+    const nuevosInsumos = [...nuevosInsumosSeleccionadosUpdate];
+    
+    // Actualizar la cantidad del insumo en la posición especificada
+    nuevosInsumos[index].cantidad = Number(text);
+  
+    // Actualizar el estado con la nueva lista de insumos
+    setNuevosInsumosSeleccionadosUpdate(nuevosInsumos);
   };
   
   
+
+  const handleEditInsumoQuantityPruebas = (newQuantity, index) => {
+    // Verificar si el nuevo valor de cantidad es 0
+    if (!newQuantity || /^\D+$/.test(newQuantity) || parseInt(newQuantity) <= 0) {
+      // Si newQuantity es inválido (vacío, no numérico o menor o igual a cero)
+      // Establecerlo como '1' o realizar alguna otra acción
+      newQuantity = '1';
+  } else {
+      // Eliminar ceros adicionales al principio si los hay
+      newQuantity = parseInt(newQuantity, 10).toString();
+  }
   
+    // Crear una copia del arreglo actual de detalles.
+    const updatedDetalles = ordensActualizar.detalles.map((detalle, i) => {
+      if (i === index) { // Encuentra el insumo que está siendo editado.
+        return { ...detalle, cantidad: Number(newQuantity) }; // Actualiza la cantidad.
+      }
+      return detalle; // Retorna los no modificados sin cambios.
+    });
   
+    // Actualiza el estado con los detalles actualizados.
+    setOrdensActualizar({ ...ordensActualizar, detalles: updatedDetalles });
+  };
+  
+ 
 
   useEffect(() => {
     if (ordensActualizar) {
@@ -459,31 +543,52 @@ console.log(ordenesSeleccionadas)
    
 
         <View style={styles.buttonContainer}>
-  
         <CheckBox 
   size={30}
-  checked={!!isChecked[repo.id_ft]} // Usa el estado actual para este CheckBox
+  checked={!!isChecked[repo.id_ft]}
   onPress={() => {
-    // Actualiza el estado específico para este CheckBox antes de llamar a actualizarOperacion
-    const newState = !isChecked[repo.id_ft];
-    setIsChecked(prevState => ({
-      ...prevState,
-      [repo.id_ft]: newState
-    }));
-    if (newState) {
-      actualizarOperacion(repo.id_ft, "Realizada");
-    }
+    // Mostrar un mensaje de confirmación antes de proceder
+    Alert.alert(
+      "Confirmar acción", // Título del cuadro de diálogo
+      "¿Estás seguro de que quieres marcar esta operación como realizada?", // Mensaje de confirmación
+      [
+        {
+          text: "Cancelar",
+          onPress: () => console.log("Cancelado"), // Opcional: Agregar lógica en caso de cancelar
+          style: "cancel"
+        },
+        { 
+          text: "Confirmar", 
+          onPress: () => {
+            // La lógica para actualizar el estado y la operación solo se ejecuta tras confirmar
+            const newState = !isChecked[repo.id_ft];
+            setIsChecked(prevState => ({
+              ...prevState,
+              [repo.id_ft]: newState
+            }));
+
+            if (newState) {
+              actualizarOperacion(repo.id_ft, "Realizada");
+            }
+          }
+        }
+      ],
+      { cancelable: true } // Esto permite cerrar el Alert tocando fuera de él
+    );
   }}
 />
 
+
   
-        <TouchableOpacity onPress={() => {
+        <TouchableOpacity
+         onPress={() => {
           fetchActualizarOrdenes(repo.id_ft); // Establece la orden que se está editando
           toggleModalVisibilityUpdate(); // Abre el modal
+          setNuevosInsumosSeleccionadosUpdate([]);
+          setOrdenesSeleccionadas([])
         }}
         style={styles.button}
         >
-          
           <Icon name="edit" size={30} color="blue" />
         </TouchableOpacity>
 
@@ -528,7 +633,7 @@ console.log(ordenesSeleccionadas)
         handleRemoveOrder={handleRemoveOrder}
       />
 
-                <Modal
+  <Modal
     animationType="slide"
     transparent
     visible={isModalVisibleUpdate}
@@ -606,7 +711,8 @@ console.log(ordenesSeleccionadas)
 </View>
 
                            <View style={styles.tableContainer}>
-  {ordensActualizar && ordensActualizar.detalles && ordensActualizar.detalles.length > 0 && (
+    
+  {ordensActualizar && ordensActualizar.detalles && (
     <>
       <Text style={styles.tableHeader}>Insumos de la Orden</Text>
       <View style={styles.table}>
@@ -618,19 +724,32 @@ console.log(ordenesSeleccionadas)
         </View>
         <ScrollView style={styles.tableScrollView}>
           {ordensActualizar.detalles.map((insumo, index) => (
-            <View style={styles.tableRow} key={'existente-' + index}>
+
+            <View style={styles.tableRow} key={insumo.fk_insumo || index}>
               <Text style={styles.tableCell}>{insumo.fk_insumo}</Text>
               <Text style={styles.tableCell}>{insumo.insumo?.nombre}</Text>
               <TextInput 
                 style={styles.tableCellInput} 
-                onChangeText={(text) => handleEditInsumoQuantity(text, index)} 
+                onChangeText={(newQuantity) => handleEditInsumoQuantityPruebas(newQuantity, index)} 
                 value={String(insumo.cantidad )}  
                 keyboardType="numeric"
               />
               <Text style={styles.tableCell}>{insumo.precio * insumo.cantidad}</Text>
+            
+              <TouchableHighlight
+            style={styles.removeButton}
+            onPress={() => handleRemoveNewOrderList(index)} // Manejar la eliminación de nuevos insumos
+          >
+            <Icon name="close" size={20} color="red" />
+          </TouchableHighlight>
             </View>
+            
           ))}
+   
+
           {nuevosInsumosSeleccionadosUpdate.map((insumo, index) => (
+ !ordensActualizar.detalles.some(item => item.fk_insumo === insumo.id_insumo) && 
+ !ordensActualizar.detalles.some(item => item.id_insumo === insumo.id_insumo) && (
         <View style={styles.tableRow} key={'nuevo-' + index}>
           <Text style={styles.tableCell}>{insumo.id_insumo}</Text>
           <Text style={styles.tableCell}>{insumo.nombre}</Text>
@@ -648,7 +767,9 @@ console.log(ordenesSeleccionadas)
             <Icon name="close" size={20} color="red" />
           </TouchableHighlight>
         </View>
+            )
       ))}
+    
         </ScrollView>
       </View>
       <View>
@@ -657,7 +778,9 @@ console.log(ordenesSeleccionadas)
                 <Text style={{fontWeight: 'bold', fontSize:22}}>Total: {formatearValores(granTotal)}</Text>
                 </View>
     </>
+  
   )}
+
 </View>
 <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10 }}>
 
@@ -672,6 +795,8 @@ console.log(ordenesSeleccionadas)
     </View>
     </View>
 </Modal>
+
+
 
       </ScrollView>
       <SafeAreaView style={styles.containerboton}>
